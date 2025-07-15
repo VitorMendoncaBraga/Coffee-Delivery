@@ -1,0 +1,25 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+@theme{
+  --color-purple-dark: #4B2995;
+  --color-purple-default: #8047F8;
+  --color-purple-light: #EBE5F9;
+  --color-yellow-dark: #c47f17;
+  --color-yellow-default: #dbac2c;
+  --color-yellow-light: #f1e9c9;
+  --color-base-title: #272221;
+  --color-base-subtitle: #403937;
+  --color-base-text: #574f4d;
+  --color-base-label: #8d8686;
+  --color-base-hover: #d7d5d5;
+  --color-base-button: #e6e5e5;
+  --color-base-input: #ededed;
+  --color-base-card: #f3f2f2;
+  --color-background: #fafafa;
+  --font-poppins: Poppins, sans-serif;
+  --font-roboto: Roboto, sans-serif;
+  --font-roboto-mono: "Roboto Mono", monospace;
+  --font-baloo2: "Baloo 2", sans-serif;
+}
+
