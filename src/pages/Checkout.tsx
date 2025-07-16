@@ -19,15 +19,24 @@ import Coffee_Latte from "../assets/Coffee_Latte.png";
 import Coffee_Macchiato from "../assets/Coffee_Macchiato.png";
 import Coffee_Mochaccino from "../assets/Coffee_Mochaccino.png";
 import { FaRegTrashAlt } from "react-icons/fa";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 export function Checkout() {
   let {
     coffeeListCheckout,
     setCoffeeListCheckout,
     setTotalAmountItemsCheckout,
+    newOrder,
+    setNewOrder,
   } = useContext(Context);
+
+  let navigate = useNavigate();
+
+  type PaymentMethod = "Cartão de crédito" | "Cartão de débito" | "Dinheiro" | null
+
   const [totalCost, setTotalCost] = useState(0);
-  console.log(coffeeListCheckout);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(null);
 
   const imgMap = {
     Coffee_Americano: Coffee_Americano,
@@ -112,6 +121,57 @@ export function Checkout() {
     );
   }
 
+  interface IFormData {
+    cep: string;
+    logradouro: string;
+    numero: string;
+    complemento: string;
+    bairro: string;
+    cidade: string;
+    uf: string;
+  }
+
+  const [formData, setFormData] = useState<IFormData>({
+    cep: "",
+    logradouro: "",
+    numero: "",
+    complemento: "",
+    bairro: "",
+    cidade: "",
+    uf: "",
+  });
+
+  async function handleConfirmOrder() {
+    if (
+      paymentMethod == null ||
+      formData.cep == "" ||
+      formData.bairro == "" ||
+      formData.cidade == "" ||
+      formData.logradouro == "" ||
+      formData.numero == "" ||
+      formData.uf == ""
+    ) {
+      return Swal.fire("Erro", "Preencha todos os campos", "error");
+    }
+    try {
+      const order = {
+        adress: {
+          formData,
+        },
+        order: {
+          coffeeListCheckout,
+        },
+        paymentMethod: paymentMethod,
+      };
+      setNewOrder(order);
+      await Swal.fire("Sucesso!", "Pedido realizado com sucesso", "success");
+      return console.log(newOrder);
+    } finally {
+      setCoffeeListCheckout([])
+      navigate("/success");
+    }
+  }
+
   return (
     <div className="bg-background min-h-screen">
       <div className="py-20 mx-[12%] flex gap-5">
@@ -119,7 +179,7 @@ export function Checkout() {
           <h1 className="mb-4 text-[18px] font-bold">Complete seu pedido</h1>
           <div className="flex flex-col gap-5">
             <div className="bg-base-card p-10 rounded-sm">
-              <FormCheckout />
+              <FormCheckout formData={formData} setFormData={setFormData} />
             </div>
             <div className="bg-base-card p-10 rounded-sm ">
               <div className="flex gap-2">
@@ -133,7 +193,10 @@ export function Checkout() {
                 </div>
               </div>
               <div>
-                <PaymentMethod />
+                <PaymentMethod
+                  paymentMethod={paymentMethod}
+                  setPaymentMethod={setPaymentMethod}
+                />
               </div>
             </div>
           </div>
@@ -199,7 +262,9 @@ export function Checkout() {
                 </div>
               ))
             ) : (
-              <p className="text-center text-base-text font-bold">Nenhum cafe selecionado</p>
+              <p className="text-center text-base-text font-bold">
+                Nenhum cafe selecionado
+              </p>
             )}
 
             {coffeeListCheckout.length > 0 ? (
@@ -218,7 +283,10 @@ export function Checkout() {
                   <p>Total</p>
                   <p>{`R$  ` + (totalCost + 3.5).toFixed(2)}</p>
                 </div>
-                <button className="bg-yellow-default w-full mt-3 py-3 rounded-md font-bold text-white">
+                <button
+                  className="bg-yellow-default w-full mt-3 py-3 rounded-md font-bold text-white cursor-pointer"
+                  onClick={handleConfirmOrder}
+                >
                   CONFIRMAR PEDIDO
                 </button>
               </div>
